@@ -1,0 +1,190 @@
+<div class="page-header">
+  <h1>Scorecard Admin</h1>
+</div>
+
+<form class="form-horizontal" role="form" ng-submit="save()">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2 class="panel-title">Date des mises &agrave; jour</h2>
+    </div>
+
+    <div class="panel-body">
+      <div class="form-group">
+        <label for="inputTrimestre" class="col-sm-2 control-label">Trimestre</label>
+        <div class="col-sm-1">
+          <select class="form-control" ng-model="trimestre" ng-options="t for t in trimestres" required=""></select>
+        </div>
+        <label for="inputAnnee" class="col-sm-2 control-label">Ann&eacute;e</label>
+        <div class="col-sm-1">
+          <select class="form-control" ng-model="annee" ng-options="a for a in annees" required=""></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2 class="panel-title">Suivi de l'impact</h2>
+    </div>
+
+    <div class="panel-body">
+      <p>Indiquez la consommation mensuelle pour les 3 mois indiqu&eacute;s,
+      par m&eacute;thode en unit&eacute;s (e.g. nombre de pilules
+      consomm&eacute;es) - Contraception d'urgence non disponible.</p>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Consommation des contraceptifs sur le mois</th>
+              <th>{{mois[trimestre][0]}} {{annee}}</th>
+              <th>{{mois[trimestre][1]}} {{annee}}</th>
+              <th>{{mois[trimestre][2]}} {{annee}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="contraceptif in data.contraceptifs">
+              <th>{{contraceptif.nom}}</th>
+              <th ng-repeat="i in [0, 1, 2]">
+                <label class="sr-only" for="inputContraceptif_{{$parent.$index}}_{{i}}">
+                  {{mois[trimestre][i]}} {{annee}}
+                </label>
+                <input type="number" class="form-control" id="inputContraceptif_{{$parent.$index}}_{{i}}" ng-model="contraceptif.consommation[i]" required="">
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2 class="panel-title">Indicateurs programmatiques</h2>
+    </div>
+
+    <div class="panel-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th width="20%"></th>
+              <th width="30%">Activit&eacute;s</th>
+              <th width="50%">Statuts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat-start="programme in data.programmes">
+              <th rowspan="3">
+                {{programme.type}} <br>
+                <small>({{programme.description}})</small>
+              </th>
+              <td>
+                <input type="text" class="form-control" id="inputProgramme_{{$parent.$index}}_0" ng-model="programme.activites[0].nom" required="">
+              </td>
+              <td>
+                <select class="form-control" ng-model="programme.activites[0].statut" ng-options="k as v for (k,v) in statuts" required=""></select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="text" class="form-control" id="inputProgramme_{{$parent.$index}}_1" ng-model="programme.activites[1].nom" required="">
+              </td>
+              <td>
+                <select class="form-control" ng-model="programme.activites[1].statut" ng-options="k as v for (k,v) in statuts" required=""></select>
+              </td>
+            </tr>
+            <tr ng-repeat-end="">
+              <td>
+                <input type="text" class="form-control" id="inputProgramme_{{$parent.$index}}_2" ng-model="programme.activites[2].nom" required="">
+              </td>
+              <td>
+                <select class="form-control" ng-model="programme.activites[2].statut" ng-options="k as v for (k,v) in statuts" required=""></select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group">
+        <label for="inputStock" class="control-label col-sm-7">
+          Taux estim&eacute; de rupture de stock au niveau des pps
+          suite &agrave; l'enqu&ecirc;te annuelle:
+        </label>
+        <div class="col-sm-2">
+          <div class="input-group">
+            <input type="number" class="form-control" id="inputStock" ng-model="data.stock" required="">
+            <span class="input-group-addon">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2 class="panel-title">Indicateurs de suivi des engagements politiques et financiers</h2>
+    </div>
+
+    <div class="panel-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th colspan="2" width="70%"></th>
+              <th>Valeur</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat-start="engagement in data.engagements" ng-show="!$first || ['T1', 'T3'].indexOf(trimestre) > -1">
+              <th rowspan="{{engagement.activites.length}}">{{engagement.type}}</th>
+              <th>{{engagement.activites[0].nom}}</th>
+              <td>
+                <div class="input-group" ng-if="engagement.activites[0].forme == 'pourcentage'">
+                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_0" ng-model="engagement.activites[0].valeur" required="">
+                  <span class="input-group-addon">%</span>
+                </div>
+                <select class="form-control" ng-if="engagement.activites[0].forme == 'booleen'" ng-model="engagement.activites[0].valeur" ng-options="k as v for (k,v) in booleens" required=""></select>
+              </td>
+            </tr>
+            <tr ng-show="!$first || ['T1', 'T3'].indexOf(trimestre) > -1">
+              <th>{{engagement.activites[1].nom}}</th>
+              <td>
+                <div class="input-group" ng-if="engagement.activites[1].forme == 'pourcentage'">
+                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_1" ng-model="engagement.activites[1].valeur" required="">
+                  <span class="input-group-addon">%</span>
+                </div>
+                <select class="form-control" ng-if="engagement.activites[1].forme == 'booleen'" ng-model="engagement.activites[1].valeur" ng-options="k as v for (k,v) in booleens" required=""></select>
+              </td>
+            </tr>
+            <tr ng-repeat-end="" ng-show="engagement.activites.length > 2 &&
+              (!$first || ['T1', 'T3'].indexOf(trimestre) > -1)">
+              <th>{{engagement.activites[2].nom}}</th>
+              <td>
+                <div class="input-group" ng-if="engagement.activites[2].forme == 'pourcentage'">
+                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_2" ng-model="engagement.activites[2].valeur" required="">
+                  <span class="input-group-addon">%</span>
+                </div>
+                <select class="form-control" ng-if="engagement.activites[2].forme == 'booleen'" ng-model="engagement.activites[2].valeur" ng-options="k as v for (k,v) in booleens" required=""></select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div ng-repeat="alert in alerts">
+    <div class="alert alert-dismissable alert-{{alert.type}}">
+      <button type="button" class="close" ng-click="alerts.splice($index, 1)">&times;</button>
+      {{alert.message}}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-4">
+      <button type="submit" class="btn btn-primary btn-lg btn-block">
+        Enregistrer les donn&eacute;es</button>
+    </div>
+  </div>
+</form>

@@ -3,9 +3,9 @@
 </div>
 
 <ul class="nav nav-pills nav-justified">
-  <li class="active"><a href="#">T1 2013</a></li>
-  <li><a href="#">T2 2013</a></li>
-  <li><a href="#">T3 2013</a></li>
+  <li ng-repeat="t in trimestres">
+    <a href="" ng-click="$parent.trimestre = t" ng-class="{active: trimestre == t}">{{t}}</a>
+  </li>
 </ul>
 
 <div class="panel panel-primary">
@@ -27,102 +27,50 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>Pilules</th>
-                <td>250.667</td>
+              <tr ng-repeat="contraceptif in data.contraceptifs">
+                <th>{{contraceptif.nom}}</th>
+                <td>{{contraceptif.total}}</td>
                 <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  25.3%
+                  <span class="glyphicon" ng-class="{
+                    'glyphicon-arrow-up success': contraceptif.trimestreChange > 0,
+                    'glyphicon-minus warning': contraceptif.trimestreChange === 0,
+                    'glyphicon-arrow-down danger': contraceptif.trimestreChange < 0
+                    }"></span>
+                  {{contraceptif.trimestreChange}}
+                  <span ng-if="contraceptif.trimestreChange !== void(0)">%</span>
                 </td>
                 <td>
-                  <span class="glyphicon glyphicon-exclamation-sign warning"></span>
-                  0%
-                </td>
-              </tr>
-              <tr>
-                <th>Injectables</th>
-                <td>30.000</td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  50%
-                </td>
-                <td>
-                  <span class="glyphicon glyphicon-remove-sign danger"></span>
-                  -10%
-                </td>
-              </tr>
-              <tr>
-                <th>Implants</th>
-                <td>78.395</td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  12%
-                </td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  12%
-                </td>
-              </tr>
-              <tr>
-                <th>DIU</th>
-                <td>53.283</td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  6.6%
-                </td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  7%
-                </td>
-              </tr>
-              <tr>
-                <th>Pr&eacute;servatifs</th>
-                <td>63.500</td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  217.5%
-                </td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  218%
-                </td>
-              </tr>
-              <tr>
-                <th>Contraception d'urgence</th>
-                <td>18.000</td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  260.0%
-                </td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  260%
-                </td>
-              </tr>
-              <tr>
-                <th>St&eacute;rilisation</th>
-                <td>11.850</td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  97.5%
-                </td>
-                <td>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  98%
+                  <span class="glyphicon" ng-class="{
+                    'glyphicon-arrow-up success': contraceptif.yearChange > 0,
+                    'glyphicon-minus warning': contraceptif.yearChange === 0,
+                    'glyphicon-arrow-down danger': contraceptif.yearChange < 0
+                    }"></span>
+                  {{contraceptif.yearChange}}
+                  <span ng-if="contraceptif.yearChange !== void(0)">%</span>
                 </td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <th>Total</th>
-                <th>505.694</th>
+                <th>{{data.contraceptifsTotal}}</th>
                 <th>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  36.3%
+                  <span class="glyphicon" ng-class="{
+                    'glyphicon-arrow-up success': data.contraceptifsTrimestreChange > 0,
+                    'glyphicon-minus warning': data.contraceptifsTrimestreChange === 0,
+                    'glyphicon-arrow-down danger': data.contraceptifsTrimestreChange < 0
+                    }"></span>
+                  {{data.contraceptifsTrimestreChange}}
+                  <span ng-if="data.contraceptifsTrimestreChange !== void(0)">%</span>
                 </th>
                 <th>
-                  <span class="glyphicon glyphicon-ok-sign success"></span>
-                  36.3%
+                  <span class="glyphicon" ng-class="{
+                    'glyphicon-arrow-up success': data.contraceptifsYearChange > 0,
+                    'glyphicon-minus warning': data.contraceptifsYearChange === 0,
+                    'glyphicon-arrow-down danger': data.contraceptifsYearChange < 0
+                    }"></span>
+                  {{data.contraceptifsYearChange}}
+                  <span ng-if="data.contraceptifsYearChange !== void(0)">%</span>
                 </th>
               </tr>
             </tfoot>
@@ -131,7 +79,7 @@
       </div>
 
       <div class="col-sm-5">
-        <div ui-chart="data" chart-options="chartOptions"></div>
+        <div ng-if="chartData[0][0]" ui-chart="chartData" chart-options="chartOptions"></div>
       </div>
     </div>
   </div>
@@ -154,44 +102,32 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th rowspan="3">Demande</th>
-              <td class="success">Activit&eacute; 1</td>
-              <td class="success">En avance ou dans les temps par rapport au plan</td>
+            <tr ng-repeat-start="programme in data.programmes">
+              <th rowspan="3">{{programme.type}}</th>
+              <td ng-class="{success: programme.activites[0].statut == '0',
+                warning: programme.activites[0].statut == '1',
+                danger: programme.activites[0].statut == '2'}">
+                {{programme.activites[0].nom}}</td>
+              <td ng-class="{success: programme.activites[0].statut == '0',
+                warning: programme.activites[0].statut == '1',
+                danger: programme.activites[0].statut == '2'}">
+                {{statuts[programme.activites[0].statut]}}</td>
             </tr>
             <tr>
-              <td class="warning">Activit&eacute; 2</td>
-              <td class="warning">En retard de moins de 3 mois par rapport au plan</td>
+              <td ng-class="{success: programme.activites[1].statut == '0',
+                warning: programme.activites[1].statut == '1',
+                danger: programme.activites[1].statut == '2'}">{{programme.activites[1].nom}}</td>
+              <td ng-class="{success: programme.activites[1].statut == '0',
+                warning: programme.activites[1].statut == '1',
+                danger: programme.activites[1].statut == '2'}">{{statuts[programme.activites[1].statut]}}</td>
             </tr>
-            <tr>
-              <td class="danger">Activit&eacute; 3</td>
-              <td class="danger">En retard de plus de 3 mois par rapport au plan</td>
-            </tr>
-            <tr>
-              <th rowspan="3">Acc&egrave;s aux services</th>
-              <td class="danger">Activit&eacute; 1</td>
-              <td class="danger">En retard de plus de 3 mois par rapport au plan</td>
-            </tr>
-            <tr>
-              <td class="success">Activit&eacute; 2</td>
-              <td class="success">En avance ou dans les temps par rapport au plan</td>
-            </tr>
-            <tr>
-              <td class="warning">Activit&eacute; 3</td>
-              <td class="warning">En retard de moins de 3 mois par rapport au plan</td>
-            </tr>
-            <tr>
-              <th rowspan="3">Disponibilit&eacute; des produits</th>
-              <td class="warning">Activit&eacute; 1</td>
-              <td class="warning">En retard de moins de 3 mois par rapport au plan</td>
-            </tr>
-            <tr>
-              <td class="danger">Activit&eacute; 2</td>
-              <td class="danger">En retard de plus de 3 mois par rapport au plan</td>
-            </tr>
-            <tr>
-              <td class="success">Activit&eacute; 3</td>
-              <td class="success">En avance ou dans les temps par rapport au plan</td>
+            <tr ng-repeat-end="">
+              <td ng-class="{success: programme.activites[2].statut == '0',
+                warning: programme.activites[2].statut == '1',
+                danger: programme.activites[2].statut == '2'}">{{programme.activites[2].nom}}</td>
+              <td ng-class="{success: programme.activites[2].statut == '0',
+                warning: programme.activites[2].statut == '1',
+                danger: programme.activites[2].statut == '2'}">{{statuts[programme.activites[2].statut]}}</td>
             </tr>
           </tbody>
         </table>
@@ -199,15 +135,15 @@
     </div>
 
     <div class="col-sm-3">
-      <div class="panel panel-warning">
+      <div class="panel" ng-class="{'panel-success': data.stock == 0,
+        'panel-warning': data.stock <= 5 && data.stock > 0, 'panel-danger': data.stock > 5}">
         <div class="panel-heading">
           <h3 class="panel-title">
-            <span class="glyphicon glyphicon-exclamation-sign warning"></span>
             Taux de rupture de stock
           </h3>
         </div>
         <div class="panel-body center">
-          <span class="lead"><b>1%</b></span>
+          <span class="lead"><b>{{data.stock}} %</b></span>
         </div>
       </div>
     </div>
@@ -230,73 +166,76 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th rowspan="3">Financements</th>
-            <th>Part du budget du PF promise</th>
+          <tr ng-repeat-start="engagement in data.engagements" ng-show="!$first || trimestre.indexOf('T1') > -1 || trimestre.indexOf('T3') > -1">
+            <th rowspan="{{engagement.activites.length}}">{{engagement.type}}</th>
+            <th>{{engagement.activites[0].nom}}</th>
             <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              99%
+              <span ng-if="engagement.activites[0].forme == 'pourcentage'">
+                {{engagement.activites[0].valeur}} %
+              </span>
+              <span ng-if="engagement.activites[0].forme == 'booleen'">
+                <span class="glyphicon" ng-class="{'glyphicon-ok-sign success': engagement.activites[0].valeur == '1',
+                  'glyphicon-remove-sign danger': engagement.activites[0].valeur == '0'}"></span>
+                {{booleens[engagement.activites[0].valeur]}}
+              </span>
             </td>
             <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              99%
-            </td>
-          </tr>
-          <tr>
-            <th>Part du budget du PF re&ccedil;ue</th>
-            <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              95%
-            </td>
-            <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              95%
-            </td>
-          </tr>
-          <tr>
-            <th>Part du budget du PF financ&eacute;e par le gouvernement</th>
-            <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              20%
-            </td>
-            <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              20%
+              <span ng-if="engagement.activites[0].forme == 'pourcentage'">
+                <span class="glyphicon" ng-class="{
+                  'glyphicon-arrow-up success': engagement.activites[0].prev > 0,
+                  'glyphicon-minus warning': engagement.activites[0].prev === 0,
+                  'glyphicon-arrow-down danger': engagement.activites[0].prev < 0}"></span>
+                {{engagement.activites[0].prev}}
+                <span ng-if="engagement.activites[0].prev !== void(0)">%</span>
+              </span>
             </td>
           </tr>
-          <tr>
-            <th rowspan="2">Engagement politique</th>
-            <th>Adoption des normes de l'OMS</th>
+          <tr ng-show="!$first || trimestre.indexOf('T1') > -1 || trimestre.indexOf('T3') > -1">
+            <th>{{engagement.activites[1].nom}}</th>
             <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              Oui
+              <span ng-if="engagement.activites[1].forme == 'pourcentage'">
+                {{engagement.activites[1].valeur}} %
+              </span>
+              <span ng-if="engagement.activites[1].forme == 'booleen'">
+                <span class="glyphicon" ng-class="{'glyphicon-ok-sign success': engagement.activites[1].valeur == '1',
+                  'glyphicon-remove-sign danger': engagement.activites[1].valeur == '0'}"></span>
+                {{booleens[engagement.activites[1].valeur]}}
+              </span>
             </td>
-            <td></td>
+            <td>
+              <span ng-if="engagement.activites[1].forme == 'pourcentage'">
+                <span class="glyphicon" ng-class="{
+                  'glyphicon-arrow-up success': engagement.activites[1].prev > 0,
+                  'glyphicon-minus warning': engagement.activites[1].prev === 0,
+                  'glyphicon-arrow-down danger': engagement.activites[1].prev < 0}"></span>
+                {{engagement.activites[1].prev}}
+                <span ng-if="engagement.activites[1].prev !== void(0)">%</span>
+              </span>
+            </td>
           </tr>
-          <tr>
-            <th>Remont&eacute;e de la fonction PF dans les organigrammes</th>
+          <tr ng-repeat-end="" ng-show="engagement.activites.length > 2 &&
+              (!$first || trimestre.indexOf('T1') > -1 || trimestre.indexOf('T3') > -1)">
+            <th>{{engagement.activites[2].nom}}</th>
             <td>
-              <span class="glyphicon glyphicon-remove-sign danger"></span>
-              Non
+              <span ng-if="engagement.activites[2].forme == 'pourcentage'">
+                {{engagement.activites[2].valeur}} %
+              </span>
+              <span ng-if="engagement.activites[2].forme == 'booleen'">
+                <span class="glyphicon" ng-class="{'glyphicon-ok-sign success': engagement.activites[2].valeur == '1',
+                  'glyphicon-remove-sign danger': engagement.activites[2].valeur == '0'}"></span>
+                {{booleens[engagement.activites[2].valeur]}}
+              </span>
             </td>
-            <td></td>
-          </tr>
-          <tr>
-            <th rowspan="2">Suivi et coordination</th>
-            <th>Un comit&eacute; technique de mise en œuvre du plan a eu lieu ce trimestre</th>
             <td>
-              <span class="glyphicon glyphicon-ok-sign success"></span>
-              Oui
+              <span ng-if="engagement.activites[2].forme == 'pourcentage'">
+                <span class="glyphicon" ng-class="{
+                  'glyphicon-arrow-up success': engagement.activites[2].prev > 0,
+                  'glyphicon-minus warning': engagement.activites[2].prev === 0,
+                  'glyphicon-arrow-down danger': engagement.activites[2].prev < 0}"></span>
+                {{engagement.activites[2].prev}}
+                <span ng-if="engagement.activites[2].prev !== void(0)">%</span>
+              </span>
             </td>
-            <td></td>
-          </tr>
-          <tr>
-            <th>Part des r&eacute;gions dont les donn&eacute;es sont int&eacute;gr&eacute;es dans ce rapport</th>
-            <td>
-              <span class="glyphicon glyphicon-remove-sign success"></span>
-              90%
-            </td>
-            <td></td>
           </tr>
         </tbody>
       </table>
