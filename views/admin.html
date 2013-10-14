@@ -141,20 +141,20 @@
               <th>{{engagement.activites[0].nom}}</th>
               <td>
                 <div class="input-group" ng-if="engagement.activites[0].forme == 'pourcentage'">
-                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_0" ng-model="engagement.activites[0].valeur" required="">
+                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_0" ng-model="engagement.activites[0].valeur" ng-required="!$first || ['T1', 'T3'].indexOf(trimestre) > -1">
                   <span class="input-group-addon">%</span>
                 </div>
-                <select class="form-control" ng-if="engagement.activites[0].forme == 'booleen'" ng-model="engagement.activites[0].valeur" ng-options="k as v for (k,v) in booleens" required=""></select>
+                <select class="form-control" ng-if="engagement.activites[0].forme == 'booleen'" ng-model="engagement.activites[0].valeur" ng-options="k as v for (k,v) in booleens" ng-required="!$first || ['T1', 'T3'].indexOf(trimestre) > -1"></select>
               </td>
             </tr>
             <tr ng-show="!$first || ['T1', 'T3'].indexOf(trimestre) > -1">
               <th>{{engagement.activites[1].nom}}</th>
               <td>
                 <div class="input-group" ng-if="engagement.activites[1].forme == 'pourcentage'">
-                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_1" ng-model="engagement.activites[1].valeur" required="">
+                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_1" ng-model="engagement.activites[1].valeur" ng-required="!$first || ['T1', 'T3'].indexOf(trimestre) > -1">
                   <span class="input-group-addon">%</span>
                 </div>
-                <select class="form-control" ng-if="engagement.activites[1].forme == 'booleen'" ng-model="engagement.activites[1].valeur" ng-options="k as v for (k,v) in booleens" required=""></select>
+                <select class="form-control" ng-if="engagement.activites[1].forme == 'booleen'" ng-model="engagement.activites[1].valeur" ng-options="k as v for (k,v) in booleens" ng-required="!$first || ['T1', 'T3'].indexOf(trimestre) > -1"></select>
               </td>
             </tr>
             <tr ng-repeat-end="" ng-show="engagement.activites.length > 2 &&
@@ -162,10 +162,10 @@
               <th>{{engagement.activites[2].nom}}</th>
               <td>
                 <div class="input-group" ng-if="engagement.activites[2].forme == 'pourcentage'">
-                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_2" ng-model="engagement.activites[2].valeur" required="">
+                  <input type="number" class="form-control" id="inputEngagement_{{$index}}_2" ng-model="engagement.activites[2].valeur" ng-required="!$first || ['T1', 'T3'].indexOf(trimestre) > -1">
                   <span class="input-group-addon">%</span>
                 </div>
-                <select class="form-control" ng-if="engagement.activites[2].forme == 'booleen'" ng-model="engagement.activites[2].valeur" ng-options="k as v for (k,v) in booleens" required=""></select>
+                <select class="form-control" ng-if="engagement.activites[2].forme == 'booleen'" ng-model="engagement.activites[2].valeur" ng-options="k as v for (k,v) in booleens" ng-required="!$first || ['T1', 'T3'].indexOf(trimestre) > -1"></select>
               </td>
             </tr>
           </tbody>
@@ -182,9 +182,13 @@
   </div>
 
   <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-4">
+    <div class="col-sm-offset-2 col-sm-4">
       <button type="submit" class="btn btn-primary btn-lg btn-block">
         Enregistrer les donn&eacute;es</button>
+    </div>
+    <div class="col-sm-4">
+      <button type="button" class="btn btn-lg btn-block" ng-click="reset()">
+        Effacer les donn&eacute;es</button>
     </div>
   </div>
 </form>
